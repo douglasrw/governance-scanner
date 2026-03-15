@@ -3,3 +3,4 @@ tsconfig.json
 .gitignore
 .github/
 *.tgz
+PUBLISH.md

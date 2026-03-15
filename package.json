@@ -1,7 +1,7 @@
 {
   "name": "governance-scanner",
   "version": "1.0.0",
-  "description": "AI governance posture scanner for GitHub repositories. Scores enforcement hooks, CI/CD, security, testing, governance docs, and project hygiene.",
+  "description": "AI agent governance scanner for GitHub repositories - enforcement, security, compliance",
   "main": "dist/scanner.js",
   "types": "dist/scanner.d.ts",
   "bin": {
@@ -21,17 +21,20 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "ai",
+    "governance",
+    "agent",
+    "llm",
+    "claude",
+    "enforcement",
+    "scanner",
+    "compliance",
+    "security",
+    "devops",
     "ai-governance",
-    "governance-scanner",
     "context-engineering",
     "enforcement-ladder",
-    "ai-compliance",
     "responsible-ai",
-    "github-scanner",
-    "security-audit",
-    "code-quality",
-    "devsecops",
-    "claude",
     "cursor",
     "ai-coding"
   ],
