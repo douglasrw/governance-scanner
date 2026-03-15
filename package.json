@@ -39,11 +39,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/walseth-ai/governance-scanner.git"
+    "url": "git+https://github.com/douglasrw/governance-scanner.git"
   },
   "homepage": "https://walseth.ai/scan",
   "bugs": {
-    "url": "https://github.com/walseth-ai/governance-scanner/issues"
+    "url": "https://github.com/douglasrw/governance-scanner/issues"
   },
   "engines": {
     "node": ">=18.0.0"
