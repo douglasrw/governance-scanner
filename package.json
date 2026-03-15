@@ -1,0 +1,60 @@
+{
+  "name": "governance-scanner",
+  "version": "1.0.0",
+  "description": "AI governance posture scanner for GitHub repositories. Scores enforcement hooks, CI/CD, security, testing, governance docs, and project hygiene.",
+  "main": "dist/scanner.js",
+  "types": "dist/scanner.d.ts",
+  "bin": {
+    "governance-scanner": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/scanner.js",
+      "types": "./dist/scanner.d.ts"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "test": "node --test dist/test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ai-governance",
+    "governance-scanner",
+    "context-engineering",
+    "enforcement-ladder",
+    "ai-compliance",
+    "responsible-ai",
+    "github-scanner",
+    "security-audit",
+    "code-quality",
+    "devsecops",
+    "claude",
+    "cursor",
+    "ai-coding"
+  ],
+  "author": "Walseth AI <hello@walseth.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walseth-ai/governance-scanner.git"
+  },
+  "homepage": "https://walseth.ai/scan",
+  "bugs": {
+    "url": "https://github.com/walseth-ai/governance-scanner/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.9.3"
+  }
+}
