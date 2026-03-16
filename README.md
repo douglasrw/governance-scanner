@@ -22,6 +22,72 @@ The governance scanner checks whether your repo has the structural controls that
 
 This is the core idea behind the **enforcement ladder**: rules should be encoded at the deepest level possible (hooks > tests > templates > prose) so they require zero awareness to follow.
 
+## Use as GitHub Action
+
+Add governance scanning to your pull requests. The action posts a comment with your governance score, grade, and key findings on every PR.
+
+### Basic usage
+
+Create `.github/workflows/governance.yml`:
+
+```yaml
+name: Governance Scan
+on:
+  pull_request:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: douglasrw/governance-scanner@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Fail PRs below a score threshold
+
+```yaml
+      - uses: douglasrw/governance-scanner@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-below: '60'
+```
+
+### Use outputs in downstream steps
+
+```yaml
+      - uses: douglasrw/governance-scanner@v1
+        id: governance
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Score is ${{ steps.governance.outputs.score }}, grade ${{ steps.governance.outputs.grade }}"
+```
+
+### Inputs
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `github-token` | Yes | `${{ github.token }}` | GitHub token for API access and PR comments |
+| `fail-below` | No | _(empty)_ | Fail the check if score is below this threshold (0-100) |
+| `comment` | No | `true` | Post a PR comment with results |
+
+### Outputs
+
+| Output | Description |
+|--------|-------------|
+| `score` | Governance score (0-100) |
+| `grade` | Letter grade (A-F) |
+| `report-url` | Link to full interactive report on walseth.ai |
+
+### Permissions
+
+The action needs `pull-requests: write` to post PR comments. If you only want outputs (no comment), set `comment: 'false'` and no extra permissions are needed.
+
+---
+
 ## Quick Start
 
 ### Zero-install (npx)

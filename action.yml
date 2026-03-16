@@ -1,0 +1,50 @@
+name: 'Governance Scanner'
+description: 'Scan your repository for AI governance posture - enforcement hooks, CI/CD, security, testing, and compliance. Posts score as a PR comment.'
+author: 'Walseth AI'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API access and posting PR comments'
+    required: true
+    default: ${{ github.token }}
+  fail-below:
+    description: 'Fail the check if governance score is below this threshold (0-100). Leave empty to never fail.'
+    required: false
+    default: ''
+  comment:
+    description: 'Post a PR comment with results (true/false)'
+    required: false
+    default: 'true'
+
+outputs:
+  score:
+    description: 'Governance score (0-100)'
+    value: ${{ steps.scan.outputs.score }}
+  grade:
+    description: 'Letter grade (A-F)'
+    value: ${{ steps.scan.outputs.grade }}
+  report-url:
+    description: 'URL to full interactive report on walseth.ai'
+    value: ${{ steps.scan.outputs.report-url }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Run Governance Scanner
+      id: scan
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        INPUT_FAIL_BELOW: ${{ inputs.fail-below }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: node ${{ github.action_path }}/action/run.mjs

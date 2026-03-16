@@ -1,0 +1,33 @@
+# Governance Scanner - Example Workflow
+#
+# Copy this file to your repository's .github/workflows/ directory and
+# uncomment the workflow to enable governance scanning on pull requests.
+#
+# For more options, see: https://github.com/douglasrw/governance-scanner
+
+# name: Governance Scan
+# on:
+#   pull_request:
+#
+# permissions:
+#   pull-requests: write
+#
+# jobs:
+#   scan:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Run Governance Scanner
+#         uses: douglasrw/governance-scanner@v1
+#         id: governance
+#         with:
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
+#           # Uncomment to fail the check if score is below threshold:
+#           # fail-below: '60'
+#           # Uncomment to disable PR comments:
+#           # comment: 'false'
+#
+#       - name: Print results
+#         run: |
+#           echo "Governance Score: ${{ steps.governance.outputs.score }}/100"
+#           echo "Grade: ${{ steps.governance.outputs.grade }}"
+#           echo "Report: ${{ steps.governance.outputs.report-url }}"
