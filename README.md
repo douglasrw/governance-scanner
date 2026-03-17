@@ -1,5 +1,6 @@
 # governance-scanner
 
+[![Governance Score](https://walseth.ai/api/badge/douglasrw/governance-scanner)](https://walseth.ai/scan?repo=douglasrw/governance-scanner)
 [![npm version](https://img.shields.io/npm/v/governance-scanner.svg)](https://www.npmjs.com/package/governance-scanner)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
