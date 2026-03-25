@@ -103,6 +103,7 @@ export const TEST_CONFIG_FILES = [
 ];
 export function hasAiGovernanceConfig(files, dirs) {
     return (files.has("CLAUDE.md") ||
+        files.has("AGENTS.md") ||
         dirs.has(".claude") ||
         files.has(".cursorrules") ||
         files.has(".github/copilot-instructions.md"));
@@ -296,14 +297,14 @@ export async function scanRepo(repoUrl) {
         findings.push({
             severity: "positive",
             title: "AI governance configuration",
-            description: "Structural AI guidance found in CLAUDE.md, .claude, .cursorrules, or .github/copilot-instructions.md.",
+            description: "Structural AI guidance found in CLAUDE.md, AGENTS.md, .claude, .cursorrules, or .github/copilot-instructions.md.",
         });
     }
     else {
         findings.push({
             severity: "warning",
             title: "No AI governance config",
-            description: "No CLAUDE.md, .claude, .cursorrules, or .github/copilot-instructions.md. AI coding tools operate without structural rules.",
+            description: "No CLAUDE.md, AGENTS.md, .claude, .cursorrules, or .github/copilot-instructions.md. AI coding tools operate without structural rules.",
         });
     }
     if (hasGovDir)
