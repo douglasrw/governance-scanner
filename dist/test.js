@@ -98,6 +98,21 @@ describe("isCommittedEnvFile", () => {
     it("ignores nested .env.dist", () => {
         assert.strictEqual(isCommittedEnvFile("app/.env.dist"), false);
     });
+    it("ignores .env.example.local", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.example.local"), false);
+    });
+    it("ignores .env.sample.local", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.sample.local"), false);
+    });
+    it("ignores .env.template.local", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.template.local"), false);
+    });
+    it("ignores .env.dist.local", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.dist.local"), false);
+    });
+    it("ignores nested .env.example.local", () => {
+        assert.strictEqual(isCommittedEnvFile("config/.env.example.local"), false);
+    });
 });
 function runCli(args) {
     try {
