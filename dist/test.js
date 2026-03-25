@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { parseGithubUrl, isCommittedEnvFile, TEST_CONFIG_FILES } from "./scanner.js";
+import { parseGithubUrl, isCommittedEnvFile, TEST_CONFIG_FILES, hasAiGovernanceConfig, } from "./scanner.js";
 describe("parseGithubUrl", () => {
     it("parses full GitHub URLs", () => {
         const result = parseGithubUrl("https://github.com/crewAIInc/crewAI");
@@ -208,6 +208,17 @@ describe("lefthook filename parity", () => {
             files.has(".lefthook.yml") ||
             files.has(".lefthook.yaml");
         assert.strictEqual(hasLefthook, false);
+    });
+});
+describe("hasAiGovernanceConfig", () => {
+    it("detects recognized AI governance surfaces, including Copilot instructions", () => {
+        assert.strictEqual(hasAiGovernanceConfig(new Set(["CLAUDE.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".cursorrules"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".github/copilot-instructions.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set(), new Set([".claude"])), true);
+    });
+    it("preserves the negative case when no recognized governance surface exists", () => {
+        assert.strictEqual(hasAiGovernanceConfig(new Set(["README.md", ".github/workflows/ci.yml"]), new Set(["src", ".github"])), false);
     });
 });
 describe("testing config detection (mocked tree)", () => {

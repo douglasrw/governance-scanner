@@ -101,6 +101,12 @@ export const TEST_CONFIG_FILES = [
     "playwright.config.ts",
     "playwright.config.js",
 ];
+export function hasAiGovernanceConfig(files, dirs) {
+    return (files.has("CLAUDE.md") ||
+        dirs.has(".claude") ||
+        files.has(".cursorrules") ||
+        files.has(".github/copilot-instructions.md"));
+}
 export async function scanRepo(repoUrl) {
     const parsed = parseGithubUrl(repoUrl);
     if (!parsed)
@@ -283,22 +289,21 @@ export async function scanRepo(repoUrl) {
     });
     // 5. Governance docs (15 pts)
     let govScore = 0;
-    const hasClaudeMd = files.has("CLAUDE.md") || dirs.has(".claude");
-    const hasCursorrules = files.has(".cursorrules");
+    const hasGovernanceConfig = hasAiGovernanceConfig(files, dirs);
     const hasGovDir = ["governance", "compliance", ".governance"].some((d) => dirs.has(d));
-    if (hasClaudeMd || hasCursorrules) {
+    if (hasGovernanceConfig) {
         govScore += 10;
         findings.push({
             severity: "positive",
             title: "AI governance configuration",
-            description: "CLAUDE.md or .cursorrules found. AI tooling is governed.",
+            description: "Structural AI guidance found in CLAUDE.md, .claude, .cursorrules, or .github/copilot-instructions.md.",
         });
     }
     else {
         findings.push({
             severity: "warning",
             title: "No AI governance config",
-            description: "No CLAUDE.md or .cursorrules. AI coding tools operate without structural rules.",
+            description: "No CLAUDE.md, .claude, .cursorrules, or .github/copilot-instructions.md. AI coding tools operate without structural rules.",
         });
     }
     if (hasGovDir)
