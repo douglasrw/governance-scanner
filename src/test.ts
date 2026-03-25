@@ -101,6 +101,30 @@ describe("isCommittedEnvFile", () => {
   it("ignores .env.Example (case-insensitive)", () => {
     assert.strictEqual(isCommittedEnvFile(".env.Example"), false);
   });
+
+  it("ignores .env.template", () => {
+    assert.strictEqual(isCommittedEnvFile(".env.template"), false);
+  });
+
+  it("ignores .env.Template (case-insensitive)", () => {
+    assert.strictEqual(isCommittedEnvFile(".env.Template"), false);
+  });
+
+  it("ignores nested .env.template", () => {
+    assert.strictEqual(isCommittedEnvFile("config/.env.template"), false);
+  });
+
+  it("ignores .env.dist", () => {
+    assert.strictEqual(isCommittedEnvFile(".env.dist"), false);
+  });
+
+  it("ignores .env.DIST (case-insensitive)", () => {
+    assert.strictEqual(isCommittedEnvFile(".env.DIST"), false);
+  });
+
+  it("ignores nested .env.dist", () => {
+    assert.strictEqual(isCommittedEnvFile("app/.env.dist"), false);
+  });
 });
 
 function runCli(args: string[]): { stdout: string; stderr: string; exitCode: number } {

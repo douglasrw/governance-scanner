@@ -18,7 +18,7 @@ function getEuAiActReadiness(score) {
 }
 export function isCommittedEnvFile(filePath) {
     const name = filePath.split("/").pop() || "";
-    return /\.env($|\.)/.test(name) && !/\.env\.(example|sample)$/i.test(name);
+    return /\.env($|\.)/.test(name) && !/\.env\.(example|sample|template|dist)$/i.test(name);
 }
 export function parseGithubUrl(url) {
     // Handle shorthand owner/repo format (with optional .git suffix)
