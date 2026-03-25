@@ -1,5 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { parseGithubUrl, isCommittedEnvFile, TEST_CONFIG_FILES } from "./scanner.js";
 
 describe("parseGithubUrl", () => {
@@ -99,6 +100,58 @@ describe("isCommittedEnvFile", () => {
 
   it("ignores .env.Example (case-insensitive)", () => {
     assert.strictEqual(isCommittedEnvFile(".env.Example"), false);
+  });
+});
+
+function runCli(args: string[]): { stdout: string; stderr: string; exitCode: number } {
+  try {
+    const stdout = execFileSync(process.execPath, ["dist/cli.js", ...args], {
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: 5000,
+    });
+    return { stdout, stderr: "", exitCode: 0 };
+  } catch (err: any) {
+    return { stdout: err.stdout ?? "", stderr: err.stderr ?? "", exitCode: err.status ?? 1 };
+  }
+}
+
+describe("CLI --json error output", () => {
+  it("emits JSON error for missing repository argument", () => {
+    const { stdout, exitCode } = runCli(["--json"]);
+    assert.strictEqual(exitCode, 1);
+    const parsed = JSON.parse(stdout);
+    assert.deepStrictEqual(parsed, {
+      error: { code: "MISSING_REPOSITORY", message: "Repository URL or owner/repo is required." },
+    });
+  });
+
+  it("emits JSON error for invalid repository URL", () => {
+    const { stdout, exitCode } = runCli(["--json", "not-a-url"]);
+    assert.strictEqual(exitCode, 1);
+    const parsed = JSON.parse(stdout);
+    assert.deepStrictEqual(parsed, {
+      error: {
+        code: "INVALID_URL",
+        message: "Invalid GitHub repository URL. Use format: https://github.com/owner/repo or owner/repo",
+      },
+    });
+  });
+
+  it("emits human-readable error (not JSON) without --json flag for missing repo", () => {
+    const { stderr, stdout, exitCode } = runCli([]);
+    assert.strictEqual(exitCode, 1);
+    // Without --json, stdout should not contain JSON error object
+    assert.ok(!stdout.includes('"error"'), "stdout should not contain JSON error");
+    // stderr should contain the human-readable error or usage text
+    assert.ok(stderr.length > 0 || stdout.length > 0, "should produce some output");
+  });
+
+  it("emits human-readable error (not JSON) without --json flag for invalid URL", () => {
+    const { stderr, stdout, exitCode } = runCli(["not-a-url"]);
+    assert.strictEqual(exitCode, 1);
+    assert.ok(!stdout.includes('"error"'), "stdout should not contain JSON error");
+    assert.ok(stderr.includes("Invalid GitHub repository URL"), "stderr should contain human-readable error");
   });
 });
 

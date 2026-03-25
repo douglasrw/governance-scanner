@@ -117,8 +117,13 @@ async function main() {
     const jsonMode = args.includes("--json");
     const repoArg = args.find((a) => !a.startsWith("--"));
     if (!repoArg) {
-        console.error(red("  Error: Repository URL or owner/repo is required."));
-        printUsage();
+        if (jsonMode) {
+            console.log(JSON.stringify({ error: { code: "MISSING_REPOSITORY", message: "Repository URL or owner/repo is required." } }));
+        }
+        else {
+            console.error(red("  Error: Repository URL or owner/repo is required."));
+            printUsage();
+        }
         process.exit(1);
     }
     // Normalize input: accept owner/repo shorthand
@@ -145,7 +150,24 @@ async function main() {
     }
     catch (err) {
         const message = err instanceof Error ? err.message : "Unknown error";
-        if (message === "REPO_NOT_FOUND") {
+        if (jsonMode) {
+            const code = message === "INVALID_URL" ? "INVALID_URL"
+                : message === "REPO_NOT_FOUND" ? "REPO_NOT_FOUND"
+                    : message === "PRIVATE_REPO" ? "PRIVATE_REPO"
+                        : message === "RATE_LIMITED" ? "RATE_LIMITED"
+                            : "UNKNOWN_ERROR";
+            const humanMessage = message === "INVALID_URL"
+                ? "Invalid GitHub repository URL. Use format: https://github.com/owner/repo or owner/repo"
+                : message === "REPO_NOT_FOUND"
+                    ? "Repository not found. Make sure it is a public GitHub repository."
+                    : message === "PRIVATE_REPO"
+                        ? "This appears to be a private repository. Only public repositories can be scanned."
+                        : message === "RATE_LIMITED"
+                            ? "GitHub API rate limit reached. Set GITHUB_TOKEN environment variable to increase the limit."
+                            : message;
+            console.log(JSON.stringify({ error: { code, message: humanMessage } }));
+        }
+        else if (message === "REPO_NOT_FOUND") {
             console.error(red("\n  Error: Repository not found."));
             console.error(dim("  Make sure it is a public GitHub repository.\n"));
         }
