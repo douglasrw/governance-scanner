@@ -213,6 +213,7 @@ describe("lefthook filename parity", () => {
 describe("hasAiGovernanceConfig", () => {
     it("detects recognized AI governance surfaces, including Copilot instructions and AGENTS.md", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["CLAUDE.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/CLAUDE.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set(["AGENTS.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".cursorrules"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".github/copilot-instructions.md"]), new Set()), true);
@@ -221,7 +222,7 @@ describe("hasAiGovernanceConfig", () => {
     it("preserves the negative case when no recognized governance surface exists", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["README.md", ".github/workflows/ci.yml"]), new Set(["src", ".github"])), false);
     });
-    it("returns false when none of CLAUDE.md, AGENTS.md, .cursorrules, .claude, or copilot instructions exist", () => {
+    it("returns false when none of CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .cursorrules, .claude, or copilot instructions exist", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["package.json", "src/index.ts"]), new Set(["src", "node_modules"])), false);
     });
 });

@@ -271,6 +271,10 @@ describe("hasAiGovernanceConfig", () => {
       true
     );
     assert.strictEqual(
+      hasAiGovernanceConfig(new Set([".claude/CLAUDE.md"]), new Set()),
+      true
+    );
+    assert.strictEqual(
       hasAiGovernanceConfig(new Set(["AGENTS.md"]), new Set()),
       true
     );
@@ -301,7 +305,7 @@ describe("hasAiGovernanceConfig", () => {
     );
   });
 
-  it("returns false when none of CLAUDE.md, AGENTS.md, .cursorrules, .claude, or copilot instructions exist", () => {
+  it("returns false when none of CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .cursorrules, .claude, or copilot instructions exist", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(
         new Set(["package.json", "src/index.ts"]),
