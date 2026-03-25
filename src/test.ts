@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { parseGithubUrl, isCommittedEnvFile } from "./scanner.js";
+import { parseGithubUrl, isCommittedEnvFile, TEST_CONFIG_FILES } from "./scanner.js";
 
 describe("parseGithubUrl", () => {
   it("parses full GitHub URLs", () => {
@@ -99,5 +99,25 @@ describe("isCommittedEnvFile", () => {
 
   it("ignores .env.Example (case-insensitive)", () => {
     assert.strictEqual(isCommittedEnvFile(".env.Example"), false);
+  });
+});
+
+describe("testing config detection (mocked tree)", () => {
+  it("detects playwright.config.js as test infrastructure", () => {
+    const files = new Set(["src/index.ts", "package.json", "playwright.config.js"]);
+    const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
+    assert.strictEqual(detected, true);
+  });
+
+  it("detects playwright.config.ts as test infrastructure", () => {
+    const files = new Set(["src/index.ts", "playwright.config.ts"]);
+    const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
+    assert.strictEqual(detected, true);
+  });
+
+  it("detects no test config when none present", () => {
+    const files = new Set(["src/index.ts", "package.json", "README.md"]);
+    const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
+    assert.strictEqual(detected, false);
   });
 });

@@ -86,6 +86,21 @@ async function githubFetch(path, timeoutMs = 15000) {
         clearTimeout(timeout);
     }
 }
+export const TEST_CONFIG_FILES = [
+    "pytest.ini",
+    "pyproject.toml",
+    "setup.cfg",
+    "jest.config.js",
+    "jest.config.ts",
+    "vitest.config.ts",
+    "vitest.config.js",
+    ".nycrc",
+    "karma.conf.js",
+    "cypress.config.ts",
+    "cypress.config.js",
+    "playwright.config.ts",
+    "playwright.config.js",
+];
 export async function scanRepo(repoUrl) {
     const parsed = parseGithubUrl(repoUrl);
     if (!parsed)
@@ -237,20 +252,7 @@ export async function scanRepo(repoUrl) {
     });
     // 4. Testing (10 pts)
     let testScore = 0;
-    const testConfigs = [
-        "pytest.ini",
-        "pyproject.toml",
-        "setup.cfg",
-        "jest.config.js",
-        "jest.config.ts",
-        "vitest.config.ts",
-        "vitest.config.js",
-        ".nycrc",
-        "karma.conf.js",
-        "cypress.config.ts",
-        "cypress.config.js",
-        "playwright.config.ts",
-    ];
+    const testConfigs = TEST_CONFIG_FILES;
     const hasTestConfig = testConfigs.some((f) => files.has(f));
     const hasTestDir = ["tests", "test", "__tests__", "spec", "e2e"].some((d) => dirs.has(d));
     if (hasTestConfig)

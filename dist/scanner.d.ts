@@ -23,4 +23,5 @@ export declare function parseGithubUrl(url: string): {
     owner: string;
     repo: string;
 } | null;
+export declare const TEST_CONFIG_FILES: string[];
 export declare function scanRepo(repoUrl: string): Promise<ScanResult>;
