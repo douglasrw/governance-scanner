@@ -155,6 +155,38 @@ describe("CLI --json error output", () => {
   });
 });
 
+describe("lefthook filename parity", () => {
+  const lefthookVariants = [
+    "lefthook.yml",
+    "lefthook.yaml",
+    ".lefthook.yml",
+    ".lefthook.yaml",
+  ];
+
+  for (const variant of lefthookVariants) {
+    it(`detects ${variant} as enforcement hook config`, () => {
+      const files = new Set([variant, "src/index.ts"]);
+      // Replicate the hasLefthook check from scanner.ts
+      const hasLefthook =
+        files.has("lefthook.yml") ||
+        files.has("lefthook.yaml") ||
+        files.has(".lefthook.yml") ||
+        files.has(".lefthook.yaml");
+      assert.strictEqual(hasLefthook, true, `${variant} should be detected as lefthook config`);
+    });
+  }
+
+  it("does not detect lefthook when no variant is present", () => {
+    const files = new Set(["src/index.ts", "package.json"]);
+    const hasLefthook =
+      files.has("lefthook.yml") ||
+      files.has("lefthook.yaml") ||
+      files.has(".lefthook.yml") ||
+      files.has(".lefthook.yaml");
+    assert.strictEqual(hasLefthook, false);
+  });
+});
+
 describe("testing config detection (mocked tree)", () => {
   it("detects playwright.config.js as test infrastructure", () => {
     const files = new Set(["src/index.ts", "package.json", "playwright.config.js"]);

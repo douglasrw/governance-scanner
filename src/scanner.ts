@@ -159,7 +159,10 @@ export async function scanRepo(repoUrl: string): Promise<ScanResult> {
     files.has(".pre-commit-config.yml");
   const hasHusky = dirs.has(".husky");
   const hasLefthook =
-    files.has("lefthook.yml") || files.has(".lefthook.yml");
+    files.has("lefthook.yml") ||
+    files.has("lefthook.yaml") ||
+    files.has(".lefthook.yml") ||
+    files.has(".lefthook.yaml");
 
   if (hasPreCommit || hasHusky || hasLefthook) {
     enforcementScore += 15;
