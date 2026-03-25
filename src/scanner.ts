@@ -37,7 +37,7 @@ function getEuAiActReadiness(score: number): string {
 
 export function isCommittedEnvFile(filePath: string): boolean {
   const name = filePath.split("/").pop() || "";
-  return /\.env($|\.)/.test(name) && !/\.env\.(example|sample|template|dist)(\..+)?$/i.test(name);
+  return /\.env($|\.)/.test(name) && !/\.env\.(.+\.)?(example|sample|template|dist)(\..+)?$/i.test(name);
 }
 
 export function parseGithubUrl(

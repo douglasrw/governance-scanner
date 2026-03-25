@@ -113,6 +113,27 @@ describe("isCommittedEnvFile", () => {
     it("ignores nested .env.example.local", () => {
         assert.strictEqual(isCommittedEnvFile("config/.env.example.local"), false);
     });
+    it("ignores .env.local.example", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.local.example"), false);
+    });
+    it("ignores .env.development.example", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.development.example"), false);
+    });
+    it("ignores .env.local.sample", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.local.sample"), false);
+    });
+    it("ignores .env.production.template", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.production.template"), false);
+    });
+    it("ignores .env.staging.dist", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.staging.dist"), false);
+    });
+    it("ignores nested .env.local.example", () => {
+        assert.strictEqual(isCommittedEnvFile("config/.env.local.example"), false);
+    });
+    it("ignores .env.local.Example (case-insensitive)", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.local.Example"), false);
+    });
 });
 function runCli(args) {
     try {
