@@ -18,6 +18,7 @@ export interface Dimension {
     score: number;
     maxScore: number;
 }
+export declare function isCommittedEnvFile(filePath: string): boolean;
 export declare function parseGithubUrl(url: string): {
     owner: string;
     repo: string;

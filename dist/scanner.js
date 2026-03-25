@@ -16,6 +16,10 @@ function getEuAiActReadiness(score) {
         return "Gaps identified";
     return "Not ready";
 }
+export function isCommittedEnvFile(filePath) {
+    const name = filePath.split("/").pop() || "";
+    return /\.env($|\.)/.test(name) && !/\.env\.(example|sample)$/i.test(name);
+}
 export function parseGithubUrl(url) {
     // Handle shorthand owner/repo format (with optional .git suffix)
     const shorthand = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+?)(?:\.git)?$/);
@@ -200,7 +204,7 @@ export async function scanRepo(repoUrl) {
     }
     if (hasCodeowners)
         securityScore += 3;
-    const envFiles = Array.from(files).filter((f) => /\.env($|\.)/.test(f.split("/").pop() || ""));
+    const envFiles = Array.from(files).filter(isCommittedEnvFile);
     if (envFiles.length > 0) {
         findings.push({
             severity: "critical",

@@ -35,6 +35,11 @@ function getEuAiActReadiness(score: number): string {
   return "Not ready";
 }
 
+export function isCommittedEnvFile(filePath: string): boolean {
+  const name = filePath.split("/").pop() || "";
+  return /\.env($|\.)/.test(name) && !/\.env\.(example|sample)$/i.test(name);
+}
+
 export function parseGithubUrl(
   url: string
 ): { owner: string; repo: string } | null {
@@ -244,9 +249,7 @@ export async function scanRepo(repoUrl: string): Promise<ScanResult> {
 
   if (hasCodeowners) securityScore += 3;
 
-  const envFiles = Array.from(files).filter((f) =>
-    /\.env($|\.)/.test(f.split("/").pop() || "")
-  );
+  const envFiles = Array.from(files).filter(isCommittedEnvFile);
   if (envFiles.length > 0) {
     findings.push({
       severity: "critical",

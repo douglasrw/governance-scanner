@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { parseGithubUrl } from "./scanner.js";
+import { parseGithubUrl, isCommittedEnvFile } from "./scanner.js";
 describe("parseGithubUrl", () => {
     it("parses full GitHub URLs", () => {
         const result = parseGithubUrl("https://github.com/crewAIInc/crewAI");
@@ -49,5 +49,34 @@ describe("parseGithubUrl", () => {
     it("rejects bare GitHub domain", () => {
         const result = parseGithubUrl("https://github.com/owner");
         assert.strictEqual(result, null);
+    });
+});
+describe("isCommittedEnvFile", () => {
+    it("detects .env at root", () => {
+        assert.strictEqual(isCommittedEnvFile(".env"), true);
+    });
+    it("detects .env.local", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.local"), true);
+    });
+    it("detects .env.production", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.production"), true);
+    });
+    it("detects nested .env", () => {
+        assert.strictEqual(isCommittedEnvFile("config/.env"), true);
+    });
+    it("detects nested .env.local", () => {
+        assert.strictEqual(isCommittedEnvFile("app/.env.local"), true);
+    });
+    it("ignores .env.example", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.example"), false);
+    });
+    it("ignores .env.sample", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.sample"), false);
+    });
+    it("ignores nested .env.example", () => {
+        assert.strictEqual(isCommittedEnvFile("config/.env.example"), false);
+    });
+    it("ignores .env.Example (case-insensitive)", () => {
+        assert.strictEqual(isCommittedEnvFile(".env.Example"), false);
     });
 });
