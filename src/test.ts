@@ -318,6 +318,60 @@ describe("hasAiGovernanceConfig", () => {
       false
     );
   });
+
+  it("detects .github/instructions/*.instructions.md as governance config", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".github/instructions/copilot.instructions.md"]),
+        new Set()
+      ),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".github/instructions/coding-style.instructions.md"]),
+        new Set()
+      ),
+      true
+    );
+  });
+
+  it("rejects files not matching *.instructions.md pattern in .github/instructions/", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".github/instructions/README.md"]),
+        new Set()
+      ),
+      false
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".github/instructions/notes.md"]),
+        new Set()
+      ),
+      false
+    );
+  });
+
+  it("rejects .instructions.md files outside .github/instructions/", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set(["docs/copilot.instructions.md"]),
+        new Set()
+      ),
+      false
+    );
+  });
+
+  it("rejects nested subdirectories under .github/instructions/", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".github/instructions/sub/copilot.instructions.md"]),
+        new Set()
+      ),
+      false
+    );
+  });
 });
 
 describe("testing config detection (mocked tree)", () => {

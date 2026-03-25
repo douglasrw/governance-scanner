@@ -108,7 +108,10 @@ export function hasAiGovernanceConfig(files, dirs) {
         dirs.has(".claude") ||
         files.has(".cursorrules") ||
         files.has(".github/copilot-instructions.md") ||
-        dirs.has(".cursor/rules"));
+        dirs.has(".cursor/rules") ||
+        Array.from(files).some((f) => f.startsWith(".github/instructions/") &&
+            f.endsWith(".instructions.md") &&
+            f.split("/").length === 3));
 }
 export async function scanRepo(repoUrl) {
     const parsed = parseGithubUrl(repoUrl);
@@ -299,14 +302,14 @@ export async function scanRepo(repoUrl) {
         findings.push({
             severity: "positive",
             title: "AI governance configuration",
-            description: "Structural AI guidance found in CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, or .cursor/rules.",
+            description: "Structural AI guidance found in CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, or .github/instructions/*.instructions.md.",
         });
     }
     else {
         findings.push({
             severity: "warning",
             title: "No AI governance config",
-            description: "No CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, or .cursor/rules. AI coding tools operate without structural rules.",
+            description: "No CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, or .github/instructions/*.instructions.md. AI coding tools operate without structural rules.",
         });
     }
     if (hasGovDir)
