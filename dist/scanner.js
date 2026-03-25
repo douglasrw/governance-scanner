@@ -22,6 +22,13 @@ export function parseGithubUrl(url) {
     if (shorthand) {
         return { owner: shorthand[1], repo: shorthand[2] };
     }
+    // Handle SSH remote format: git@github.com:owner/repo.git
+    const sshMatch = url
+        .trim()
+        .match(/^git@github\.com:([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+?)(?:\.git)?$/);
+    if (sshMatch) {
+        return { owner: sshMatch[1], repo: sshMatch[2] };
+    }
     // Handle scheme-less github.com/owner/repo
     let normalized = url.trim();
     if (/^github\.com\//i.test(normalized)) {

@@ -22,6 +22,18 @@ describe("parseGithubUrl", () => {
         const result = parseGithubUrl("github.com/owner/repo.git");
         assert.deepStrictEqual(result, { owner: "owner", repo: "repo" });
     });
+    it("parses SSH remote git@github.com:owner/repo.git", () => {
+        const result = parseGithubUrl("git@github.com:crewAIInc/crewAI.git");
+        assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });
+    });
+    it("parses SSH remote without .git suffix", () => {
+        const result = parseGithubUrl("git@github.com:owner/repo");
+        assert.deepStrictEqual(result, { owner: "owner", repo: "repo" });
+    });
+    it("rejects non-GitHub SSH remotes", () => {
+        const result = parseGithubUrl("git@gitlab.com:owner/repo.git");
+        assert.strictEqual(result, null);
+    });
     it("rejects non-GitHub URLs", () => {
         const result = parseGithubUrl("https://gitlab.com/owner/repo");
         assert.strictEqual(result, null);
