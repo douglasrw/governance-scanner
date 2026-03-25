@@ -14,6 +14,14 @@ describe("parseGithubUrl", () => {
         const result = parseGithubUrl("langchain-ai/langchain");
         assert.deepStrictEqual(result, { owner: "langchain-ai", repo: "langchain" });
     });
+    it("parses scheme-less github.com/owner/repo", () => {
+        const result = parseGithubUrl("github.com/crewAIInc/crewAI");
+        assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });
+    });
+    it("parses scheme-less github.com/owner/repo.git", () => {
+        const result = parseGithubUrl("github.com/owner/repo.git");
+        assert.deepStrictEqual(result, { owner: "owner", repo: "repo" });
+    });
     it("rejects non-GitHub URLs", () => {
         const result = parseGithubUrl("https://gitlab.com/owner/repo");
         assert.strictEqual(result, null);

@@ -22,8 +22,13 @@ export function parseGithubUrl(url) {
     if (shorthand) {
         return { owner: shorthand[1], repo: shorthand[2] };
     }
+    // Handle scheme-less github.com/owner/repo
+    let normalized = url.trim();
+    if (/^github\.com\//i.test(normalized)) {
+        normalized = `https://${normalized}`;
+    }
     try {
-        const parsed = new URL(url.trim());
+        const parsed = new URL(normalized);
         if (parsed.hostname !== "github.com")
             return null;
         const parts = parsed.pathname.split("/").filter(Boolean);
