@@ -14,6 +14,10 @@ describe("parseGithubUrl", () => {
         const result = parseGithubUrl("langchain-ai/langchain");
         assert.deepStrictEqual(result, { owner: "langchain-ai", repo: "langchain" });
     });
+    it("parses owner/repo.git shorthand", () => {
+        const result = parseGithubUrl("langchain-ai/langchain.git");
+        assert.deepStrictEqual(result, { owner: "langchain-ai", repo: "langchain" });
+    });
     it("parses scheme-less github.com/owner/repo", () => {
         const result = parseGithubUrl("github.com/crewAIInc/crewAI");
         assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });

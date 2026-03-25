@@ -38,8 +38,8 @@ function getEuAiActReadiness(score: number): string {
 export function parseGithubUrl(
   url: string
 ): { owner: string; repo: string } | null {
-  // Handle shorthand owner/repo format
-  const shorthand = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
+  // Handle shorthand owner/repo format (with optional .git suffix)
+  const shorthand = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+?)(?:\.git)?$/);
   if (shorthand) {
     return { owner: shorthand[1], repo: shorthand[2] };
   }
