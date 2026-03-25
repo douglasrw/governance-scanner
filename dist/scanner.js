@@ -109,9 +109,11 @@ export function hasAiGovernanceConfig(files, dirs) {
         files.has(".cursorrules") ||
         files.has(".github/copilot-instructions.md") ||
         dirs.has(".cursor/rules") ||
-        Array.from(files).some((f) => f.startsWith(".github/instructions/") &&
+        Array.from(files).some((f) => (f.startsWith(".github/instructions/") &&
             f.endsWith(".instructions.md") &&
-            f.split("/").length === 3));
+            f.split("/").length === 3) ||
+            f.startsWith(".claude/") ||
+            f.startsWith(".cursor/rules/")));
 }
 export async function scanRepo(repoUrl) {
     const parsed = parseGithubUrl(repoUrl);

@@ -240,6 +240,14 @@ describe("hasAiGovernanceConfig", () => {
     it("rejects nested subdirectories under .github/instructions/", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set([".github/instructions/sub/copilot.instructions.md"]), new Set()), false);
     });
+    it("detects .claude/* files when .claude dir entry is absent", () => {
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/settings.json"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/commands/review.md"]), new Set()), true);
+    });
+    it("detects .cursor/rules/* files when .cursor/rules dir entry is absent", () => {
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".cursor/rules/my-rule.mdc"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".cursor/rules/style.md"]), new Set()), true);
+    });
 });
 describe("testing config detection (mocked tree)", () => {
     it("detects playwright.config.js as test infrastructure", () => {
