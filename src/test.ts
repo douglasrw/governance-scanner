@@ -480,6 +480,67 @@ describe("lefthook filename parity", () => {
   });
 });
 
+describe("governance finding language", () => {
+  it("mentions Claude settings surfaces in the positive governance finding", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: ".claude/settings.json", type: "blob" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "AI governance configuration"
+      );
+
+      assert.ok(finding);
+      assert.match(
+        finding.description,
+        /Claude settings surfaces such as \.claude\/settings\.json/
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it("mentions Claude settings surfaces in the missing-governance finding", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [{ path: "src/index.ts", type: "blob" }],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "No AI governance config"
+      );
+
+      assert.ok(finding);
+      assert.match(
+        finding.description,
+        /Claude settings surfaces such as \.claude\/settings\.json/
+      );
+    } finally {
+      restore();
+    }
+  });
+});
+
 describe("hasAiGovernanceConfig", () => {
   it("detects recognized AI governance surfaces, including Claude, Gemini, Copilot, AGENTS.md, .cursor/rules, and governance agent directories", () => {
     assert.strictEqual(
