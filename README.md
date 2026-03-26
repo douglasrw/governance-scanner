@@ -125,7 +125,7 @@ The scanner evaluates six dimensions of governance posture, each weighted by imp
 | **Security** | 20 | SECURITY.md, .gitignore, .env file exposure, Dependabot/Renovate |
 | **Testing** | 10 | Test frameworks (pytest, jest, vitest, playwright), test directories |
 | **Governance** | 15 | `CLAUDE.md`, `.claude/` surfaces such as `.claude/CLAUDE.md`, `.claude/settings.json`, and `.claude/settings.local.json`, `GEMINI.md`, `.gemini/GEMINI.md`, `AGENTS.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, `data/agents/`, `data/roles/`, `scripts/agents/`, plus `governance/`, `compliance/`, and `.governance/` |
-| **Hygiene** | 10 | README, CONTRIBUTING, LICENSE, CHANGELOG, lockfiles |
+| **Hygiene** | 10 | README, CONTRIBUTING, LICENSE, CHANGELOG, lockfiles (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `poetry.lock`, `Pipfile.lock`, `Cargo.lock`, `go.sum`, `uv.lock`) |
 
 **Total: 100 points.** Grades: A (80+), B (60+), C (40+), D (20+), F (<20).
 
