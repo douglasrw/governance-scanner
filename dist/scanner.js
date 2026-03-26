@@ -125,6 +125,8 @@ export const TEST_CONFIG_FILES = [
 export function hasAiGovernanceConfig(files, dirs) {
     return (files.has("CLAUDE.md") ||
         files.has(".claude/CLAUDE.md") ||
+        files.has("GEMINI.md") ||
+        files.has(".gemini/GEMINI.md") ||
         files.has("AGENTS.md") ||
         dirs.has(".claude") ||
         files.has(".cursorrules") ||
@@ -330,14 +332,14 @@ export async function scanRepo(repoUrl) {
         findings.push({
             severity: "positive",
             title: "AI governance configuration",
-            description: "Structural AI guidance found in CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/*.instructions.md.",
+            description: "Structural AI guidance found in CLAUDE.md, .claude/CLAUDE.md, GEMINI.md, .gemini/GEMINI.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/*.instructions.md.",
         });
     }
     else {
         findings.push({
             severity: "warning",
             title: "No AI governance config",
-            description: "No CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/*.instructions.md. AI coding tools operate without structural rules.",
+            description: "No CLAUDE.md, .claude/CLAUDE.md, GEMINI.md, .gemini/GEMINI.md, AGENTS.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/*.instructions.md. AI coding tools operate without structural rules.",
         });
     }
     if (hasGovDir)

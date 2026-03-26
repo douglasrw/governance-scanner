@@ -219,9 +219,11 @@ describe("lefthook filename parity", () => {
     });
 });
 describe("hasAiGovernanceConfig", () => {
-    it("detects recognized AI governance surfaces, including Copilot instructions, AGENTS.md, .cursor/rules, and governance agent directories", () => {
+    it("detects recognized AI governance surfaces, including Claude, Gemini, Copilot, AGENTS.md, .cursor/rules, and governance agent directories", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["CLAUDE.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/CLAUDE.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set(["GEMINI.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".gemini/GEMINI.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set(["AGENTS.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".cursorrules"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".github/copilot-instructions.md"]), new Set()), true);
@@ -234,8 +236,11 @@ describe("hasAiGovernanceConfig", () => {
     it("preserves the negative case when no recognized governance surface exists", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["README.md", ".github/workflows/ci.yml"]), new Set(["src", ".github"])), false);
     });
-    it("returns false when none of CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .cursorrules, .claude, copilot instructions, or .cursor/rules exist", () => {
+    it("returns false when none of CLAUDE.md, .claude/CLAUDE.md, GEMINI.md, .gemini/GEMINI.md, AGENTS.md, .cursorrules, .claude, copilot instructions, or .cursor/rules exist", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["package.json", "src/index.ts"]), new Set(["src", "node_modules"])), false);
+    });
+    it("does not treat other .gemini files as governance config", () => {
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".gemini/settings.json"]), new Set([".gemini"])), false);
     });
     it("detects .github/instructions/*.instructions.md as governance config", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set([".github/instructions/copilot.instructions.md"]), new Set()), true);

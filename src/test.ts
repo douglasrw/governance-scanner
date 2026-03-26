@@ -275,13 +275,21 @@ describe("lefthook filename parity", () => {
 });
 
 describe("hasAiGovernanceConfig", () => {
-  it("detects recognized AI governance surfaces, including Copilot instructions, AGENTS.md, .cursor/rules, and governance agent directories", () => {
+  it("detects recognized AI governance surfaces, including Claude, Gemini, Copilot, AGENTS.md, .cursor/rules, and governance agent directories", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(new Set(["CLAUDE.md"]), new Set()),
       true
     );
     assert.strictEqual(
       hasAiGovernanceConfig(new Set([".claude/CLAUDE.md"]), new Set()),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(new Set(["GEMINI.md"]), new Set()),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(new Set([".gemini/GEMINI.md"]), new Set()),
       true
     );
     assert.strictEqual(
@@ -331,11 +339,21 @@ describe("hasAiGovernanceConfig", () => {
     );
   });
 
-  it("returns false when none of CLAUDE.md, .claude/CLAUDE.md, AGENTS.md, .cursorrules, .claude, copilot instructions, or .cursor/rules exist", () => {
+  it("returns false when none of CLAUDE.md, .claude/CLAUDE.md, GEMINI.md, .gemini/GEMINI.md, AGENTS.md, .cursorrules, .claude, copilot instructions, or .cursor/rules exist", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(
         new Set(["package.json", "src/index.ts"]),
         new Set(["src", "node_modules"])
+      ),
+      false
+    );
+  });
+
+  it("does not treat other .gemini files as governance config", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".gemini/settings.json"]),
+        new Set([".gemini"])
       ),
       false
     );
