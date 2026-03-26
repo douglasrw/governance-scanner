@@ -155,9 +155,9 @@ The scanner evaluates six dimensions of governance posture, each weighted by imp
     No pre-commit hooks, Husky, or lefthook found.
   ! No AI governance config
     No CLAUDE.md or claude.md, .claude/CLAUDE.md, Claude settings surfaces
-    such as .claude/settings.json and .claude/settings.local.json, GEMINI.md
-    or gemini.md, .gemini/GEMINI.md, AGENTS.md or agents.md, .claude,
-    .cursorrules,
+    such as .claude/settings.json and .claude/settings.local.json,
+    .claude/commands/* guidance surfaces, GEMINI.md or gemini.md,
+    .gemini/GEMINI.md, AGENTS.md or agents.md, .claude, .cursorrules,
     .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles,
     scripts/agents, or .github/instructions/**/*.instructions.md. AI coding
     tools operate without structural rules.
