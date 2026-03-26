@@ -584,6 +584,10 @@ describe("hasAiGovernanceConfig", () => {
       true
     );
     assert.strictEqual(
+      hasAiGovernanceConfig(new Set(["claude.md"]), new Set()),
+      true
+    );
+    assert.strictEqual(
       hasAiGovernanceConfig(new Set([".claude/CLAUDE.md"]), new Set()),
       true
     );
@@ -592,11 +596,19 @@ describe("hasAiGovernanceConfig", () => {
       true
     );
     assert.strictEqual(
+      hasAiGovernanceConfig(new Set(["gemini.md"]), new Set()),
+      true
+    );
+    assert.strictEqual(
       hasAiGovernanceConfig(new Set([".gemini/GEMINI.md"]), new Set()),
       true
     );
     assert.strictEqual(
       hasAiGovernanceConfig(new Set(["AGENTS.md"]), new Set()),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(new Set(["agents.md"]), new Set()),
       true
     );
     assert.strictEqual(

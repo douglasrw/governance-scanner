@@ -160,10 +160,13 @@ export function isTestFilePath(filePath) {
 }
 export function hasAiGovernanceConfig(files, dirs) {
     return (files.has("CLAUDE.md") ||
+        files.has("claude.md") ||
         files.has(".claude/CLAUDE.md") ||
         files.has("GEMINI.md") ||
+        files.has("gemini.md") ||
         files.has(".gemini/GEMINI.md") ||
         files.has("AGENTS.md") ||
+        files.has("agents.md") ||
         dirs.has(".claude") ||
         files.has(".cursorrules") ||
         files.has(".github/copilot-instructions.md") ||

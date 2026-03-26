@@ -458,10 +458,13 @@ describe("governance finding language", () => {
 describe("hasAiGovernanceConfig", () => {
     it("detects recognized AI governance surfaces, including Claude, Gemini, Copilot, AGENTS.md, .cursor/rules, and governance agent directories", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set(["CLAUDE.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set(["claude.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/CLAUDE.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set(["GEMINI.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set(["gemini.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".gemini/GEMINI.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set(["AGENTS.md"]), new Set()), true);
+        assert.strictEqual(hasAiGovernanceConfig(new Set(["agents.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".cursorrules"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".github/copilot-instructions.md"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set(), new Set(["data/agents"])), true);
