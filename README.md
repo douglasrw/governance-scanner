@@ -184,6 +184,25 @@ npx governance-scanner --json https://github.com/your-org/your-repo
 
 Returns a JSON object with `score`, `grade`, `dimensions`, `findings`, and `resultId`.
 
+### JSON Error Codes
+
+When `--json` is set and an error occurs, the CLI exits with code 1 and prints a JSON object with a single `error` key containing `code` and `message` fields:
+
+```json
+{ "error": { "code": "REPO_NOT_FOUND", "message": "Repository not found. Make sure it is a public GitHub repository." } }
+```
+
+| Code | Meaning |
+|------|---------|
+| `MISSING_REPOSITORY` | No repository URL or `owner/repo` argument was provided. |
+| `INVALID_URL` | The input is not a recognizable GitHub repository URL or `owner/repo` shorthand. |
+| `REPO_NOT_FOUND` | The GitHub API returned 404 -- the repository does not exist or is not visible. |
+| `PRIVATE_REPO` | The repository exists but is private. Only public repositories can be scanned. |
+| `RATE_LIMITED` | GitHub API rate limit exceeded. Set `GITHUB_TOKEN` to raise the limit to 5,000 requests/hour. |
+| `UNKNOWN_ERROR` | An unexpected error occurred. The `message` field contains the original error text. |
+
+Without `--json`, the same errors are printed as human-readable messages to stderr.
+
 ## GitHub API Rate Limits
 
 Without authentication, GitHub allows 60 API requests per hour. Each scan uses 2 requests. To increase the limit to 5,000/hour, set a GitHub token:
