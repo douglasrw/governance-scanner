@@ -516,6 +516,8 @@ export async function scanRepo(repoUrl: string): Promise<ScanResult> {
     "package-lock.json",
     "yarn.lock",
     "pnpm-lock.yaml",
+    "bun.lock",
+    "bun.lockb",
     "Cargo.lock",
     "go.sum",
     "uv.lock",

@@ -349,6 +349,38 @@ describe("CI/CD detection from package.json scripts", () => {
         }
     });
 });
+describe("hygiene lockfile detection", () => {
+    for (const bunLockfile of ["bun.lock", "bun.lockb"]) {
+        it(`counts ${bunLockfile} as a hygiene lockfile`, async () => {
+            const { restore } = mockGithubApi({
+                "/repos/owner/repo": {
+                    body: { private: false, default_branch: "main" },
+                },
+                "/repos/owner/repo/git/trees/main?recursive=1": {
+                    body: {
+                        tree: [
+                            { path: "README.md", type: "blob" },
+                            { path: bunLockfile, type: "blob" },
+                            { path: "src/index.ts", type: "blob" },
+                        ],
+                    },
+                },
+            });
+            try {
+                const result = await scanRepo("owner/repo");
+                const hygieneDimension = result.dimensions.find((dimension) => dimension.name === "Hygiene");
+                assert.deepStrictEqual(hygieneDimension, {
+                    name: "Hygiene",
+                    score: 5,
+                    maxScore: 10,
+                });
+            }
+            finally {
+                restore();
+            }
+        });
+    }
+});
 describe("lefthook filename parity", () => {
     const lefthookVariants = [
         "lefthook.yml",

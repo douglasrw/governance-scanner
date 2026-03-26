@@ -420,6 +420,8 @@ export async function scanRepo(repoUrl) {
         "package-lock.json",
         "yarn.lock",
         "pnpm-lock.yaml",
+        "bun.lock",
+        "bun.lockb",
         "Cargo.lock",
         "go.sum",
         "uv.lock",
