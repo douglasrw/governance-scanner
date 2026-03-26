@@ -419,6 +419,7 @@ describe("testing config detection (mocked tree)", () => {
     "vitest.config.cjs",
     "vitest.config.mjs",
     "vitest.config.cts",
+    "karma.conf.ts",
     "karma.conf.cjs",
     "karma.conf.mjs",
     "karma.conf.cts",

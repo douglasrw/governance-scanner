@@ -101,6 +101,7 @@ export const TEST_CONFIG_FILES = [
     "vitest.config.cjs",
     "vitest.config.mjs",
     ".nycrc",
+    "karma.conf.ts",
     "karma.conf.js",
     "karma.conf.cjs",
     "karma.conf.mjs",
