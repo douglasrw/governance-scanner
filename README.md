@@ -17,7 +17,7 @@ npx governance-scanner https://github.com/crewAIInc/crewAI
 
 ## Why Governance Scanning Matters
 
-AI coding tools (Claude Code, Cursor, GitHub Copilot) are writing production code across thousands of repositories. Most of these repos have **zero structural enforcement** -- no pre-commit hooks, no CLAUDE.md, no .cursorrules. The AI operates without guardrails.
+AI coding tools (Claude Code, Cursor, GitHub Copilot) are writing production code across thousands of repositories. Most of these repos have **zero structural enforcement** -- no pre-commit hooks, no `CLAUDE.md`, no `AGENTS.md`, no `.github/copilot-instructions.md`, no `.cursor/rules/`. The AI operates without guardrails.
 
 The governance scanner checks whether your repo has the structural controls that make AI-assisted development safe and auditable. It's not about detecting AI-generated code -- it's about ensuring AI tools follow your rules.
 
@@ -124,7 +124,7 @@ The scanner evaluates six dimensions of governance posture, each weighted by imp
 | **CI/CD** | 15 | GitHub Actions workflows, Travis CI, CircleCI, Jenkins |
 | **Security** | 20 | SECURITY.md, .gitignore, .env file exposure, Dependabot/Renovate |
 | **Testing** | 10 | Test frameworks (pytest, jest, vitest, playwright), test directories |
-| **Governance** | 15 | CLAUDE.md, .cursorrules, .claude directory, governance directories |
+| **Governance** | 15 | `CLAUDE.md`, `.claude/` surfaces such as `.claude/CLAUDE.md` and `.claude/settings.json`, `GEMINI.md`, `.gemini/GEMINI.md`, `AGENTS.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md`, `data/agents/`, `data/roles/`, `scripts/agents/`, plus `governance/`, `compliance/`, and `.governance/` |
 | **Hygiene** | 10 | README, CONTRIBUTING, LICENSE, CHANGELOG, lockfiles |
 
 **Total: 100 points.** Grades: A (80+), B (60+), C (40+), D (20+), F (<20).
@@ -154,7 +154,12 @@ The scanner evaluates six dimensions of governance posture, each weighted by imp
   X No enforcement hooks
     No pre-commit hooks, Husky, or lefthook found.
   ! No AI governance config
-    No CLAUDE.md or .cursorrules. AI tools operate ungoverned.
+    No CLAUDE.md, .claude/CLAUDE.md, Claude settings surfaces such as
+    .claude/settings.json, GEMINI.md, .gemini/GEMINI.md, AGENTS.md, .claude,
+    .cursorrules, .github/copilot-instructions.md, .cursor/rules,
+    data/agents, data/roles, scripts/agents, or
+    .github/instructions/*.instructions.md. AI coding tools operate without
+    structural rules.
   v 5 CI/CD workflow(s)
     GitHub Actions workflows automate checks.
 
@@ -221,12 +226,15 @@ The scoring is deterministic and transparent. Every point maps to a specific fil
 
 ## Context Engineering and AI Compliance
 
-As AI coding agents become standard development tools, organizations need governance that scales. The governance scanner checks for the foundations:
+As AI coding agents become standard development tools, organizations need governance that scales. The governance scanner checks for common governance surfaces, including:
 
-- **CLAUDE.md** -- Structural rules for Claude Code agents
-- **.cursorrules** -- Configuration for Cursor AI
-- **Pre-commit hooks** -- Enforcement that runs before code enters the repo
-- **CODEOWNERS** -- Ownership rules that gate who can approve changes
+- **Claude surfaces** -- `CLAUDE.md`, `.claude/CLAUDE.md`, and `.claude/` settings or instruction files such as `.claude/settings.json`
+- **Gemini surfaces** -- `GEMINI.md` and `.gemini/GEMINI.md`
+- **Agent instruction files** -- `AGENTS.md`, `.github/copilot-instructions.md`, and `.github/instructions/*.instructions.md`
+- **Cursor surfaces** -- `.cursorrules` and `.cursor/rules/`
+- **Agent directories** -- `data/agents/`, `data/roles/`, and `scripts/agents/`
+- **Governance directories** -- `governance/`, `compliance/`, and `.governance/`
+- **Pre-commit hooks and CODEOWNERS** -- Enforcement and ownership controls that gate changes before merge
 
 These are the building blocks of responsible AI development. Without them, AI tools generate code without constraints, creating compliance risk and technical debt.
 
