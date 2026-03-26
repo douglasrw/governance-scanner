@@ -126,8 +126,7 @@ export function hasAiGovernanceConfig(files, dirs) {
         files.has(".github/copilot-instructions.md") ||
         dirs.has(".cursor/rules") ||
         Array.from(files).some((f) => (f.startsWith(".github/instructions/") &&
-            f.endsWith(".instructions.md") &&
-            f.split("/").length === 3) ||
+            f.endsWith(".instructions.md")) ||
             f.startsWith(".claude/") ||
             f.startsWith(".cursor/rules/")));
 }

@@ -363,13 +363,20 @@ describe("hasAiGovernanceConfig", () => {
     );
   });
 
-  it("rejects nested subdirectories under .github/instructions/", () => {
+  it("detects nested subdirectories under .github/instructions/", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(
         new Set([".github/instructions/sub/copilot.instructions.md"]),
         new Set()
       ),
-      false
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".github/instructions/sub/team/coding-style.instructions.md"]),
+        new Set()
+      ),
+      true
     );
   });
 

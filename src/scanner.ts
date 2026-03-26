@@ -155,8 +155,7 @@ export function hasAiGovernanceConfig(
     Array.from(files).some(
       (f) =>
         (f.startsWith(".github/instructions/") &&
-          f.endsWith(".instructions.md") &&
-          f.split("/").length === 3) ||
+          f.endsWith(".instructions.md")) ||
         f.startsWith(".claude/") ||
         f.startsWith(".cursor/rules/")
     )
