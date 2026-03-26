@@ -505,7 +505,7 @@ describe("governance finding language", () => {
       assert.ok(finding);
       assert.match(
         finding.description,
-        /Claude settings surfaces such as \.claude\/settings\.json/
+        /Claude settings surfaces such as \.claude\/settings\.json and \.claude\/settings\.local\.json/
       );
     } finally {
       restore();
@@ -533,7 +533,7 @@ describe("governance finding language", () => {
       assert.ok(finding);
       assert.match(
         finding.description,
-        /Claude settings surfaces such as \.claude\/settings\.json/
+        /Claude settings surfaces such as \.claude\/settings\.json and \.claude\/settings\.local\.json/
       );
     } finally {
       restore();

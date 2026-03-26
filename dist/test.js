@@ -395,7 +395,7 @@ describe("governance finding language", () => {
             const result = await scanRepo("owner/repo");
             const finding = result.findings.find((candidate) => candidate.title === "AI governance configuration");
             assert.ok(finding);
-            assert.match(finding.description, /Claude settings surfaces such as \.claude\/settings\.json/);
+            assert.match(finding.description, /Claude settings surfaces such as \.claude\/settings\.json and \.claude\/settings\.local\.json/);
         }
         finally {
             restore();
@@ -416,7 +416,7 @@ describe("governance finding language", () => {
             const result = await scanRepo("owner/repo");
             const finding = result.findings.find((candidate) => candidate.title === "No AI governance config");
             assert.ok(finding);
-            assert.match(finding.description, /Claude settings surfaces such as \.claude\/settings\.json/);
+            assert.match(finding.description, /Claude settings surfaces such as \.claude\/settings\.json and \.claude\/settings\.local\.json/);
         }
         finally {
             restore();
