@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { parseGithubUrl, isCommittedEnvFile, TEST_CONFIG_FILES, hasAiGovernanceConfig, } from "./scanner.js";
+import { parseGithubUrl, isCommittedEnvFile, isTestFilePath, TEST_CONFIG_FILES, hasAiGovernanceConfig, } from "./scanner.js";
 describe("parseGithubUrl", () => {
     it("parses full GitHub URLs", () => {
         const result = parseGithubUrl("https://github.com/crewAIInc/crewAI");
@@ -308,5 +308,19 @@ describe("testing config detection (mocked tree)", () => {
         const files = new Set(["src/index.ts", "package.json", "README.md"]);
         const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
         assert.strictEqual(detected, false);
+    });
+});
+describe("conventional test file detection", () => {
+    it("detects src/test.ts as testing infrastructure", () => {
+        assert.strictEqual(isTestFilePath("src/test.ts"), true);
+    });
+    it("detects *.test.* files as testing infrastructure", () => {
+        assert.strictEqual(isTestFilePath("src/components/button.test.tsx"), true);
+    });
+    it("detects *.spec.* files as testing infrastructure", () => {
+        assert.strictEqual(isTestFilePath("packages/app/button.spec.mts"), true);
+    });
+    it("ignores non-test utility files", () => {
+        assert.strictEqual(isTestFilePath("src/test-utils.ts"), false);
     });
 });

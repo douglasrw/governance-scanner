@@ -24,5 +24,6 @@ export declare function parseGithubUrl(url: string): {
     repo: string;
 } | null;
 export declare const TEST_CONFIG_FILES: string[];
+export declare function isTestFilePath(filePath: string): boolean;
 export declare function hasAiGovernanceConfig(files: Set<string>, dirs: Set<string>): boolean;
 export declare function scanRepo(repoUrl: string): Promise<ScanResult>;

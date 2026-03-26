@@ -145,6 +145,11 @@ export const TEST_CONFIG_FILES = [
   "playwright.config.mjs",
 ];
 
+export function isTestFilePath(filePath: string): boolean {
+  const name = filePath.split("/").pop() || "";
+  return /(?:^|\.)(test|spec)\.[^.]+$/i.test(name);
+}
+
 export function hasAiGovernanceConfig(
   files: Set<string>,
   dirs: Set<string>
@@ -362,21 +367,24 @@ export async function scanRepo(repoUrl: string): Promise<ScanResult> {
   const hasTestDir = ["tests", "test", "__tests__", "spec", "e2e"].some((d) =>
     dirs.has(d)
   );
+  const hasScatteredTestFile = Array.from(files).some(isTestFilePath);
 
   if (hasTestConfig) testScore += 5;
-  if (hasTestDir) testScore += 5;
+  if (hasTestDir || hasScatteredTestFile) testScore += 5;
 
   if (testScore > 0) {
     findings.push({
       severity: "positive",
       title: "Testing infrastructure",
-      description: "Test configuration and test directories are present.",
+      description:
+        "Test configuration or conventional test files/directories are present.",
     });
   } else {
     findings.push({
       severity: "warning",
       title: "No test infrastructure detected",
-      description: "No test config or test directories found at root level.",
+      description:
+        "No test config, test directories, or conventional test files found.",
     });
   }
   dimensions.push({
