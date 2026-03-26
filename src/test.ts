@@ -576,6 +576,65 @@ describe("governance finding language", () => {
     }
   });
 
+  it("mentions .claude/commands/* guidance surfaces in the positive governance finding", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: ".claude/commands/review.md", type: "blob" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "AI governance configuration"
+      );
+
+      assert.ok(finding);
+      assert.match(
+        finding.description,
+        /\.claude\/commands\/\* guidance surfaces/
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it("mentions .claude/commands/* guidance surfaces in the missing-governance finding", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [{ path: "src/index.ts", type: "blob" }],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "No AI governance config"
+      );
+
+      assert.ok(finding);
+      assert.match(
+        finding.description,
+        /\.claude\/commands\/\* guidance surfaces/
+      );
+    } finally {
+      restore();
+    }
+  });
+
   it("mentions lowercase claude.md, gemini.md, and agents.md in the positive governance finding", async () => {
     const { restore } = mockGithubApi({
       "/repos/owner/repo": {

@@ -475,14 +475,14 @@ export async function scanRepo(repoUrl: string): Promise<ScanResult> {
       severity: "positive",
       title: "AI governance configuration",
       description:
-        "Structural AI guidance found in CLAUDE.md, claude.md, .claude/CLAUDE.md, Claude settings surfaces such as .claude/settings.json and .claude/settings.local.json, GEMINI.md, gemini.md, .gemini/GEMINI.md, AGENTS.md, agents.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/**/*.instructions.md.",
+        "Structural AI guidance found in CLAUDE.md, claude.md, .claude/CLAUDE.md, Claude settings surfaces such as .claude/settings.json and .claude/settings.local.json, .claude/commands/* guidance surfaces, GEMINI.md, gemini.md, .gemini/GEMINI.md, AGENTS.md, agents.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/**/*.instructions.md.",
     });
   } else {
     findings.push({
       severity: "warning",
       title: "No AI governance config",
       description:
-        "No CLAUDE.md, claude.md, .claude/CLAUDE.md, Claude settings surfaces such as .claude/settings.json and .claude/settings.local.json, GEMINI.md, gemini.md, .gemini/GEMINI.md, AGENTS.md, agents.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/**/*.instructions.md. AI coding tools operate without structural rules.",
+        "No CLAUDE.md, claude.md, .claude/CLAUDE.md, Claude settings surfaces such as .claude/settings.json and .claude/settings.local.json, .claude/commands/* guidance surfaces, GEMINI.md, gemini.md, .gemini/GEMINI.md, AGENTS.md, agents.md, .claude, .cursorrules, .github/copilot-instructions.md, .cursor/rules, data/agents, data/roles, scripts/agents, or .github/instructions/**/*.instructions.md. AI coding tools operate without structural rules.",
     });
   }
 
