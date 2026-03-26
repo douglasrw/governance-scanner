@@ -899,6 +899,16 @@ describe("hasAiGovernanceConfig", () => {
     );
   });
 
+  it("detects .claude/settings.local.json when .claude dir entry is absent", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set([".claude/settings.local.json"]),
+        new Set()
+      ),
+      true
+    );
+  });
+
   it("detects .cursor/rules/* files when .cursor/rules dir entry is absent", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(
