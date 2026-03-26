@@ -124,7 +124,7 @@ The scanner evaluates six dimensions of governance posture, each weighted by imp
 | **CI/CD** | 15 | GitHub Actions workflows, Travis CI, CircleCI, Jenkins |
 | **Security** | 20 | SECURITY.md, .gitignore, .env file exposure, Dependabot/Renovate |
 | **Testing** | 10 | Test frameworks (pytest, jest, vitest, playwright), test directories |
-| **Governance** | 15 | `CLAUDE.md` or `claude.md`, `.claude/` surfaces such as `.claude/CLAUDE.md`, `.claude/settings.json`, and `.claude/settings.local.json`, `GEMINI.md` or `gemini.md`, `.gemini/GEMINI.md`, `AGENTS.md` or `agents.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`, `data/agents/`, `data/roles/`, `scripts/agents/`, plus `governance/`, `compliance/`, and `.governance/` |
+| **Governance** | 15 | `CLAUDE.md` or `claude.md`, `.claude/` surfaces such as `.claude/CLAUDE.md`, `.claude/commands/*`, `.claude/settings.json`, and `.claude/settings.local.json`, `GEMINI.md` or `gemini.md`, `.gemini/GEMINI.md`, `AGENTS.md` or `agents.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`, `data/agents/`, `data/roles/`, `scripts/agents/`, plus `governance/`, `compliance/`, and `.governance/` |
 | **Hygiene** | 10 | README, CONTRIBUTING, LICENSE, CHANGELOG, lockfiles (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `poetry.lock`, `Pipfile.lock`, `Cargo.lock`, `go.sum`, `uv.lock`) |
 
 **Total: 100 points.** Grades: A (80+), B (60+), C (40+), D (20+), F (<20).
@@ -248,7 +248,7 @@ The scoring is deterministic and transparent. Every point maps to a specific fil
 
 As AI coding agents become standard development tools, organizations need governance that scales. The governance scanner checks for common governance surfaces, including:
 
-- **Claude surfaces** -- `CLAUDE.md`, `claude.md`, `.claude/CLAUDE.md`, and `.claude/` settings or instruction files such as `.claude/settings.json` and `.claude/settings.local.json`
+- **Claude surfaces** -- `CLAUDE.md`, `claude.md`, `.claude/CLAUDE.md`, `.claude/commands/*` (slash-command definitions), and `.claude/` settings or instruction files such as `.claude/settings.json` and `.claude/settings.local.json`
 - **Gemini surfaces** -- `GEMINI.md`, `gemini.md`, and `.gemini/GEMINI.md`
 - **Agent instruction files** -- `AGENTS.md`, `agents.md`, `.github/copilot-instructions.md`, and `.github/instructions/**/*.instructions.md`
 - **Cursor surfaces** -- `.cursorrules` and `.cursor/rules/`
