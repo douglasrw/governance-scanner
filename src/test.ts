@@ -275,7 +275,7 @@ describe("lefthook filename parity", () => {
 });
 
 describe("hasAiGovernanceConfig", () => {
-  it("detects recognized AI governance surfaces, including Copilot instructions, AGENTS.md, and .cursor/rules", () => {
+  it("detects recognized AI governance surfaces, including Copilot instructions, AGENTS.md, .cursor/rules, and governance agent directories", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(new Set(["CLAUDE.md"]), new Set()),
       true
@@ -297,6 +297,18 @@ describe("hasAiGovernanceConfig", () => {
         new Set([".github/copilot-instructions.md"]),
         new Set()
       ),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(new Set(), new Set(["data/agents"])),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(new Set(), new Set(["data/roles"])),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(new Set(), new Set(["scripts/agents"])),
       true
     );
     assert.strictEqual(
@@ -418,6 +430,30 @@ describe("hasAiGovernanceConfig", () => {
     assert.strictEqual(
       hasAiGovernanceConfig(
         new Set([".cursor/rules/style.md"]),
+        new Set()
+      ),
+      true
+    );
+  });
+
+  it("detects data/agents, data/roles, and scripts/agents files when dir entries are absent", () => {
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set(["data/agents/reviewer.md"]),
+        new Set()
+      ),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set(["data/roles/security.md"]),
+        new Set()
+      ),
+      true
+    );
+    assert.strictEqual(
+      hasAiGovernanceConfig(
+        new Set(["scripts/agents/bootstrap.sh"]),
         new Set()
       ),
       true
