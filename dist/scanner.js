@@ -35,12 +35,12 @@ export function parseGithubUrl(url) {
     }
     // Handle scheme-less github.com/owner/repo
     let normalized = url.trim();
-    if (/^github\.com\//i.test(normalized)) {
+    if (/^(?:www\.)?github\.com\//i.test(normalized)) {
         normalized = `https://${normalized}`;
     }
     try {
         const parsed = new URL(normalized);
-        if (parsed.hostname !== "github.com")
+        if (!["github.com", "www.github.com"].includes(parsed.hostname))
             return null;
         const parts = parsed.pathname.split("/").filter(Boolean);
         if (parts.length < 2)

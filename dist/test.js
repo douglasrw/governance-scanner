@@ -7,6 +7,10 @@ describe("parseGithubUrl", () => {
         const result = parseGithubUrl("https://github.com/crewAIInc/crewAI");
         assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });
     });
+    it("parses full GitHub URLs with www host", () => {
+        const result = parseGithubUrl("https://www.github.com/crewAIInc/crewAI");
+        assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });
+    });
     it("parses URLs with .git suffix", () => {
         const result = parseGithubUrl("https://github.com/owner/repo.git");
         assert.deepStrictEqual(result, { owner: "owner", repo: "repo" });
@@ -21,6 +25,10 @@ describe("parseGithubUrl", () => {
     });
     it("parses scheme-less github.com/owner/repo", () => {
         const result = parseGithubUrl("github.com/crewAIInc/crewAI");
+        assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });
+    });
+    it("parses scheme-less www.github.com/owner/repo", () => {
+        const result = parseGithubUrl("www.github.com/crewAIInc/crewAI");
         assert.deepStrictEqual(result, { owner: "crewAIInc", repo: "crewAI" });
     });
     it("parses scheme-less github.com/owner/repo.git", () => {
