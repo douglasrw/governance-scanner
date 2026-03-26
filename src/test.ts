@@ -469,6 +469,7 @@ describe("testing config detection (mocked tree)", () => {
     "jest.config.cjs",
     "jest.config.mjs",
     "jest.config.cts",
+    "vitest.config.mts",
     "vitest.config.cjs",
     "vitest.config.mjs",
     "vitest.config.cts",

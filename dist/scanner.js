@@ -97,6 +97,7 @@ export const TEST_CONFIG_FILES = [
     "jest.config.cts",
     "vitest.config.ts",
     "vitest.config.cts",
+    "vitest.config.mts",
     "vitest.config.js",
     "vitest.config.cjs",
     "vitest.config.mjs",
