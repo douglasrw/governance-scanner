@@ -575,6 +575,94 @@ describe("governance finding language", () => {
       restore();
     }
   });
+
+  it("mentions lowercase claude.md, gemini.md, and agents.md in the positive governance finding", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: "claude.md", type: "blob" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "AI governance configuration"
+      );
+
+      assert.ok(finding);
+      assert.match(finding.description, /CLAUDE\.md, claude\.md/);
+      assert.match(finding.description, /GEMINI\.md, gemini\.md/);
+      assert.match(finding.description, /AGENTS\.md, agents\.md/);
+    } finally {
+      restore();
+    }
+  });
+
+  it("mentions lowercase variants in the missing-governance finding", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [{ path: "src/index.ts", type: "blob" }],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "No AI governance config"
+      );
+
+      assert.ok(finding);
+      assert.match(finding.description, /CLAUDE\.md, claude\.md/);
+      assert.match(finding.description, /GEMINI\.md, gemini\.md/);
+      assert.match(finding.description, /AGENTS\.md, agents\.md/);
+    } finally {
+      restore();
+    }
+  });
+
+  it("uses recursive glob .github/instructions/**/*.instructions.md in finding text", async () => {
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: ".github/instructions/sub/copilot.instructions.md", type: "blob" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const finding = result.findings.find(
+        (candidate) => candidate.title === "AI governance configuration"
+      );
+
+      assert.ok(finding);
+      assert.match(
+        finding.description,
+        /\.github\/instructions\/\*\*\/\*\.instructions\.md/
+      );
+    } finally {
+      restore();
+    }
+  });
 });
 
 describe("hasAiGovernanceConfig", () => {
