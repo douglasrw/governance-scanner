@@ -250,16 +250,27 @@ describe("hasAiGovernanceConfig", () => {
     });
 });
 describe("testing config detection (mocked tree)", () => {
-    it("detects playwright.config.js as test infrastructure", () => {
-        const files = new Set(["src/index.ts", "package.json", "playwright.config.js"]);
-        const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
-        assert.strictEqual(detected, true);
-    });
-    it("detects playwright.config.ts as test infrastructure", () => {
-        const files = new Set(["src/index.ts", "playwright.config.ts"]);
-        const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
-        assert.strictEqual(detected, true);
-    });
+    const trackedTestConfigVariants = [
+        "playwright.config.js",
+        "playwright.config.ts",
+        "jest.config.cjs",
+        "jest.config.mjs",
+        "vitest.config.cjs",
+        "vitest.config.mjs",
+        "karma.conf.cjs",
+        "karma.conf.mjs",
+        "cypress.config.cjs",
+        "cypress.config.mjs",
+        "playwright.config.cjs",
+        "playwright.config.mjs",
+    ];
+    for (const variant of trackedTestConfigVariants) {
+        it(`detects ${variant} as test infrastructure`, () => {
+            const files = new Set(["src/index.ts", "package.json", variant]);
+            const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
+            assert.strictEqual(detected, true);
+        });
+    }
     it("detects no test config when none present", () => {
         const files = new Set(["src/index.ts", "package.json", "README.md"]);
         const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
