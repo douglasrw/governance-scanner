@@ -7,6 +7,7 @@ import {
   isTestFilePath,
   TEST_CONFIG_FILES,
   hasAiGovernanceConfig,
+  scanRepo,
 } from "./scanner.js";
 
 describe("parseGithubUrl", () => {
@@ -204,6 +205,65 @@ function runCli(args: string[]): { stdout: string; stderr: string; exitCode: num
   }
 }
 
+type MockGithubRoute = {
+  body: unknown;
+  headers?: Record<string, string>;
+  status?: number;
+};
+
+function mockGithubApi(routes: Record<string, MockGithubRoute>): {
+  calls: string[];
+  restore: () => void;
+} {
+  const originalFetch = globalThis.fetch;
+  const calls: string[] = [];
+
+  globalThis.fetch = (async (input: string | URL | Request) => {
+    const requestUrl =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : input.url;
+    const url = new URL(requestUrl);
+    const routeKey = `${url.pathname}${url.search}`;
+    calls.push(routeKey);
+
+    const route = routes[routeKey];
+    if (!route) {
+      throw new Error(`Unexpected fetch: ${routeKey}`);
+    }
+
+    const status = route.status ?? 200;
+    const normalizedHeaders = Object.fromEntries(
+      Object.entries(route.headers ?? {}).map(([key, value]) => [
+        key.toLowerCase(),
+        value,
+      ])
+    );
+
+    return {
+      ok: status >= 200 && status < 300,
+      status,
+      headers: {
+        get(name: string) {
+          return normalizedHeaders[name.toLowerCase()] ?? null;
+        },
+      },
+      async json() {
+        return route.body;
+      },
+    } as Response;
+  }) as typeof fetch;
+
+  return {
+    calls,
+    restore() {
+      globalThis.fetch = originalFetch;
+    },
+  };
+}
+
 describe("CLI --json error output", () => {
   it("emits JSON error for missing repository argument", () => {
     const { stdout, exitCode } = runCli(["--json"]);
@@ -240,6 +300,151 @@ describe("CLI --json error output", () => {
     assert.strictEqual(exitCode, 1);
     assert.ok(!stdout.includes('"error"'), "stdout should not contain JSON error");
     assert.ok(stderr.includes("Invalid GitHub repository URL"), "stderr should contain human-readable error");
+  });
+});
+
+describe("CI/CD detection from package.json scripts", () => {
+  it("treats package.json scripts as CI/CD signal when workflows are absent", async () => {
+    const packageJsonContent = Buffer.from(
+      JSON.stringify({
+        scripts: {
+          build: "tsc",
+          test: "node --test",
+        },
+      })
+    ).toString("base64");
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: "package.json", type: "blob" },
+            { path: "src", type: "tree" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+      "/repos/owner/repo/contents/package.json?ref=main": {
+        body: {
+          type: "file",
+          encoding: "base64",
+          content: packageJsonContent,
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const ciDimension = result.dimensions.find((d) => d.name === "CI/CD");
+
+      assert.deepStrictEqual(ciDimension, {
+        name: "CI/CD",
+        score: 5,
+        maxScore: 15,
+      });
+      assert.ok(
+        result.findings.some(
+          (finding) => finding.title === "CI/CD-ready package scripts"
+        )
+      );
+      assert.ok(
+        result.findings.every(
+          (finding) => finding.title !== "No CI/CD pipeline"
+        )
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it("prefers workflow files over package.json fallback", async () => {
+    const { calls, restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: ".github", type: "tree" },
+            { path: ".github/workflows", type: "tree" },
+            { path: ".github/workflows/ci.yml", type: "blob" },
+            { path: "package.json", type: "blob" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const ciDimension = result.dimensions.find((d) => d.name === "CI/CD");
+
+      assert.deepStrictEqual(ciDimension, {
+        name: "CI/CD",
+        score: 10,
+        maxScore: 15,
+      });
+      assert.ok(
+        result.findings.some(
+          (finding) => finding.title === "1 CI/CD workflow(s)"
+        )
+      );
+      assert.ok(
+        !calls.some((call) => call.includes("/contents/package.json"))
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it("keeps the no-pipeline finding when package.json lacks CI/CD scripts", async () => {
+    const packageJsonContent = Buffer.from(
+      JSON.stringify({
+        scripts: {
+          start: "node dist/index.js",
+        },
+      })
+    ).toString("base64");
+    const { restore } = mockGithubApi({
+      "/repos/owner/repo": {
+        body: { private: false, default_branch: "main" },
+      },
+      "/repos/owner/repo/git/trees/main?recursive=1": {
+        body: {
+          tree: [
+            { path: "package.json", type: "blob" },
+            { path: "src/index.ts", type: "blob" },
+          ],
+        },
+      },
+      "/repos/owner/repo/contents/package.json?ref=main": {
+        body: {
+          type: "file",
+          encoding: "base64",
+          content: packageJsonContent,
+        },
+      },
+    });
+
+    try {
+      const result = await scanRepo("owner/repo");
+      const ciDimension = result.dimensions.find((d) => d.name === "CI/CD");
+
+      assert.deepStrictEqual(ciDimension, {
+        name: "CI/CD",
+        score: 0,
+        maxScore: 15,
+      });
+      assert.ok(
+        result.findings.some(
+          (finding) => finding.title === "No CI/CD pipeline"
+        )
+      );
+    } finally {
+      restore();
+    }
   });
 });
 

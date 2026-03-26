@@ -122,6 +122,38 @@ export const TEST_CONFIG_FILES = [
     "playwright.config.cjs",
     "playwright.config.mjs",
 ];
+const PACKAGE_JSON_CI_SCRIPT_NAMES = [
+    "build",
+    "lint",
+    "test",
+    "typecheck",
+];
+function getCiSignalScriptsFromPackageJsonContent(packageJsonContent) {
+    try {
+        const parsed = JSON.parse(packageJsonContent);
+        if (!parsed.scripts || typeof parsed.scripts !== "object")
+            return [];
+        return PACKAGE_JSON_CI_SCRIPT_NAMES.filter((scriptName) => {
+            const script = parsed.scripts?.[scriptName];
+            return typeof script === "string" && script.trim().length > 0;
+        });
+    }
+    catch {
+        return [];
+    }
+}
+async function getPackageJsonCiSignalScripts(owner, repo, defaultBranch) {
+    try {
+        const packageJson = (await githubFetch(`/repos/${owner}/${repo}/contents/package.json?ref=${encodeURIComponent(defaultBranch)}`));
+        if (typeof packageJson.content !== "string")
+            return [];
+        const content = Buffer.from(packageJson.content, packageJson.encoding === "base64" ? "base64" : "utf8").toString("utf8");
+        return getCiSignalScriptsFromPackageJsonContent(content);
+    }
+    catch {
+        return [];
+    }
+}
 export function isTestFilePath(filePath) {
     const name = filePath.split("/").pop() || "";
     return /(?:^|\.)(test|spec)\.[^.]+$/i.test(name);
@@ -235,11 +267,24 @@ export async function scanRepo(repoUrl) {
         });
     }
     else {
-        findings.push({
-            severity: "critical",
-            title: "No CI/CD pipeline",
-            description: "No GitHub Actions, Travis CI, or CircleCI configuration found.",
-        });
+        const packageJsonCiSignalScripts = files.has("package.json")
+            ? await getPackageJsonCiSignalScripts(owner, repo, defaultBranch)
+            : [];
+        if (packageJsonCiSignalScripts.length > 0) {
+            ciScore += 5;
+            findings.push({
+                severity: "info",
+                title: "CI/CD-ready package scripts",
+                description: `package.json defines ${packageJsonCiSignalScripts.join(", ")} script(s). These commands can back CI checks even though no workflow configuration was found.`,
+            });
+        }
+        else {
+            findings.push({
+                severity: "critical",
+                title: "No CI/CD pipeline",
+                description: "No GitHub Actions, Travis CI, or CircleCI configuration found.",
+            });
+        }
     }
     dimensions.push({
         name: "CI/CD",
