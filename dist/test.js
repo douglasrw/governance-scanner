@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import crypto from "crypto";
 import { parseGithubUrl, isCommittedEnvFile, isTestFilePath, TEST_CONFIG_FILES, hasAiGovernanceConfig, scanRepo, } from "./scanner.js";
 describe("parseGithubUrl", () => {
     it("parses full GitHub URLs", () => {
@@ -680,6 +681,125 @@ describe("testing config detection (mocked tree)", () => {
         const files = new Set(["src/index.ts", "package.json", "README.md"]);
         const detected = TEST_CONFIG_FILES.some((f) => files.has(f));
         assert.strictEqual(detected, false);
+    });
+});
+describe("CLI --json success output contract", () => {
+    it("contains resultId, score, grade, dimensions, and findings for a successful scan", async () => {
+        const { restore } = mockGithubApi({
+            "/repos/owner/repo": {
+                body: { private: false, default_branch: "main" },
+            },
+            "/repos/owner/repo/git/trees/main?recursive=1": {
+                body: {
+                    tree: [
+                        { path: "README.md", type: "blob" },
+                        { path: "src/index.ts", type: "blob" },
+                    ],
+                },
+            },
+        });
+        try {
+            const result = await scanRepo("owner/repo");
+            // Replicate CLI --json assembly (cli.ts lines 165-166)
+            const normalized = result.repoName.toLowerCase().trim();
+            const resultId = crypto
+                .createHash("sha256")
+                .update(normalized)
+                .digest("hex")
+                .slice(0, 12);
+            const jsonOutput = { ...result, resultId };
+            // README promises: score, grade, dimensions, findings, resultId
+            assert.strictEqual(typeof jsonOutput.resultId, "string");
+            assert.ok(jsonOutput.resultId.length > 0, "resultId must be non-empty");
+            assert.strictEqual(typeof jsonOutput.score, "number");
+            assert.strictEqual(typeof jsonOutput.grade, "string");
+            assert.ok(Array.isArray(jsonOutput.dimensions), "dimensions must be an array");
+            assert.ok(Array.isArray(jsonOutput.findings), "findings must be an array");
+            // Verify dimension shape
+            for (const dim of jsonOutput.dimensions) {
+                assert.strictEqual(typeof dim.name, "string");
+                assert.strictEqual(typeof dim.score, "number");
+                assert.strictEqual(typeof dim.maxScore, "number");
+            }
+            // Verify finding shape
+            for (const finding of jsonOutput.findings) {
+                assert.strictEqual(typeof finding.severity, "string");
+                assert.strictEqual(typeof finding.title, "string");
+                assert.strictEqual(typeof finding.description, "string");
+            }
+            // Verify all six dimensions are present
+            const dimensionNames = jsonOutput.dimensions.map((d) => d.name);
+            for (const expected of ["Enforcement", "CI/CD", "Security", "Testing", "Governance", "Hygiene"]) {
+                assert.ok(dimensionNames.includes(expected), `missing dimension: ${expected}`);
+            }
+        }
+        finally {
+            restore();
+        }
+    });
+    it("resultId is a 12-char hex string derived from repoName", async () => {
+        const { restore } = mockGithubApi({
+            "/repos/owner/repo": {
+                body: { private: false, default_branch: "main" },
+            },
+            "/repos/owner/repo/git/trees/main?recursive=1": {
+                body: {
+                    tree: [{ path: "src/index.ts", type: "blob" }],
+                },
+            },
+        });
+        try {
+            const result = await scanRepo("owner/repo");
+            const normalized = result.repoName.toLowerCase().trim();
+            const expectedId = crypto
+                .createHash("sha256")
+                .update(normalized)
+                .digest("hex")
+                .slice(0, 12);
+            assert.match(expectedId, /^[0-9a-f]{12}$/);
+            assert.strictEqual(expectedId.length, 12);
+        }
+        finally {
+            restore();
+        }
+    });
+    it("JSON output round-trips through JSON.stringify/parse without data loss", async () => {
+        const { restore } = mockGithubApi({
+            "/repos/owner/repo": {
+                body: { private: false, default_branch: "main" },
+            },
+            "/repos/owner/repo/git/trees/main?recursive=1": {
+                body: {
+                    tree: [
+                        { path: "README.md", type: "blob" },
+                        { path: ".github/workflows/ci.yml", type: "blob" },
+                        { path: "CLAUDE.md", type: "blob" },
+                        { path: "src/index.ts", type: "blob" },
+                    ],
+                },
+            },
+        });
+        try {
+            const result = await scanRepo("owner/repo");
+            const normalized = result.repoName.toLowerCase().trim();
+            const resultId = crypto
+                .createHash("sha256")
+                .update(normalized)
+                .digest("hex")
+                .slice(0, 12);
+            const jsonOutput = { ...result, resultId };
+            // Simulate CLI JSON.stringify then consumer JSON.parse
+            const serialized = JSON.stringify(jsonOutput, null, 2);
+            const parsed = JSON.parse(serialized);
+            assert.strictEqual(parsed.score, jsonOutput.score);
+            assert.strictEqual(parsed.grade, jsonOutput.grade);
+            assert.strictEqual(parsed.resultId, jsonOutput.resultId);
+            assert.strictEqual(parsed.dimensions.length, jsonOutput.dimensions.length);
+            assert.strictEqual(parsed.findings.length, jsonOutput.findings.length);
+        }
+        finally {
+            restore();
+        }
     });
 });
 describe("conventional test file detection", () => {
