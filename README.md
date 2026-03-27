@@ -121,7 +121,7 @@ The scanner evaluates six dimensions of governance posture, each weighted by imp
 | Dimension | Max Score | What It Checks |
 |-----------|-----------|----------------|
 | **Enforcement** | 30 | Pre-commit hooks (Husky, lefthook, pre-commit), commit linting, CODEOWNERS, branch protection |
-| **CI/CD** | 15 | GitHub Actions workflows, Travis CI, CircleCI, Jenkins |
+| **CI/CD** | 15 | GitHub Actions workflows, Travis CI, CircleCI, Jenkins, `package.json` CI signal scripts (`build`, `lint`, `test`, `typecheck`) |
 | **Security** | 20 | SECURITY.md, .gitignore, .env file exposure, Dependabot/Renovate |
 | **Testing** | 10 | Test frameworks (pytest, jest, vitest, playwright), test directories |
 | **Governance** | 15 | `CLAUDE.md` or `claude.md`, `.claude/` surfaces such as `.claude/CLAUDE.md`, `.claude/commands/*`, `.claude/settings.json`, and `.claude/settings.local.json`, `GEMINI.md` or `gemini.md`, `.gemini/GEMINI.md`, `AGENTS.md` or `agents.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`, `data/agents/`, `data/roles/`, `scripts/agents/`, plus `governance/`, `compliance/`, and `.governance/` |
