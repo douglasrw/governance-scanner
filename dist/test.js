@@ -619,6 +619,9 @@ describe("hasAiGovernanceConfig", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/settings.json"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/commands/review.md"]), new Set()), true);
     });
+    it("detects .claude/settings.local.json when .claude dir entry is absent", () => {
+        assert.strictEqual(hasAiGovernanceConfig(new Set([".claude/settings.local.json"]), new Set()), true);
+    });
     it("detects .cursor/rules/* files when .cursor/rules dir entry is absent", () => {
         assert.strictEqual(hasAiGovernanceConfig(new Set([".cursor/rules/my-rule.mdc"]), new Set()), true);
         assert.strictEqual(hasAiGovernanceConfig(new Set([".cursor/rules/style.md"]), new Set()), true);
